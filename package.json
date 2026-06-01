@@ -1,0 +1,21 @@
+{
+  "name": "threads-filter",
+  "version": "0.1.0",
+  "description": "Threads 接案機會篩選器 — 爬文 → 三道門漏斗分類評分 → 產草稿（回覆/廣告/DM）",
+  "type": "module",
+  "scripts": {
+    "scrape": "node src/scrape.js",
+    "triage": "node src/triage.js",
+    "rescore": "node src/rescore.js",
+    "draft": "node src/draft.js",
+    "content": "node src/content.js",
+    "web": "node src/web.js"
+  },
+  "keywords": ["threads", "freelance", "lead-gen", "ai"],
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.60.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

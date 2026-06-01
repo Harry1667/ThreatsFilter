@@ -1,0 +1,96 @@
+{
+  "note": "個人設定。改這裡就能調搜尋詞、技能、工作種類、評分權重。",
+
+  "_searchQueries_note": "實機驗證(229則):真案子散在數週/數月,必須用『相關性排序』(tab 留空)而非 recent,否則被內容行銷淹沒。需求型句式(有沒有會…的人/需要製作/找人架)比供給詞更易撈到真客戶。",
+  "searchQueries": [
+    "網站製作",
+    "需要製作網站",
+    "有沒有會架網站的人",
+    "找人 架網站",
+    "客製化網站 製作",
+    "電商網站 金流",
+    "網站 報價 製作",
+    "網頁設計 推薦",
+    "想做網站 找人",
+    "做一個 app 找人",
+    "line bot 製作",
+    "客製化軟體 開發",
+    "客製化系統 開發",
+    "自動化流程 找人",
+    "n8n 自動化 接案",
+    "excel 自動化 報表",
+    "公司 數位轉型 找",
+    "工程師 接案",
+    "遠端工作機會"
+  ],
+
+  "scrapeTargets": {
+    "_note": "tab 留空=相關性排序(預設,撈得到月前還有效的案);設 'recent' 才用最新排序。homeFeed=是否爬『為你推薦』動態消息(演算法精選 lead 池,強烈建議開)。",
+    "tab": "",
+    "homeFeed": true,
+    "minTextLen": 12
+  },
+
+  "mySkills": [
+    "react", "next.js", "nextjs", "node", "node.js", "nodejs",
+    "typescript", "javascript", "express", "fastapi", "python",
+    "flutter", "react native", "react-native",
+    "ai", "openai", "claude", "anthropic", "gemini", "llm", "prompt",
+    "api integration", "ocr", "automation", "自動化", "爬蟲", "scraping", "playwright",
+    "postgresql", "supabase", "prisma", "sqlite", "mysql", "redis", "firebase",
+    "docker", "nginx", "tailwind", "line bot", "linebot", "webhook",
+    "saas", "mvp", "bug fix", "全端", "前端", "後端", "網站", "shopify", "wordpress"
+  ],
+
+  "redlineKeywords": {
+    "_note": "命中任一 → 第二道門硬攔截(blocked)。釣魚/招代理/不相干。",
+    "list": [
+      "刷單", "博弈", "代儲", "幣圈代操", "投資群組", "私帶單",
+      "拉人頭", "傳直銷", "工作室招募", "色情", "成人",
+      "影片剪輯", "美編", "小編", "業配", "代寫論文"
+    ]
+  },
+
+  "workCategories": {
+    "_note": "工作種類(大類)。enabled=false 的種類直接 blocked,不顯示。",
+    "網站開發": { "enabled": true, "keywords": ["網站", "官網", "web", "website", "形象站", "landing"] },
+    "App開發": { "enabled": true, "keywords": ["app", "手機", "ios", "android", "flutter", "react native"] },
+    "AI整合": { "enabled": true, "keywords": ["ai", "gpt", "chatgpt", "claude", "llm", "聊天機器人", "chatbot", "ai 導入", "ai 代理", "生成"] },
+    "自動化": { "enabled": true, "keywords": ["自動化", "automation", "n8n", "zapier", "make", "排程", "工作流", "串接", "數位轉型", "複製貼上", "重複作業", "省人力"] },
+    "爬蟲資料": { "enabled": true, "keywords": ["爬蟲", "scraping", "抓資料", "data", "excel", "google sheet"] },
+    "Bug修復": { "enabled": true, "keywords": ["bug", "修", "壞掉", "報錯", "卡住", "fix"] },
+    "電商": { "enabled": true, "keywords": ["電商", "shopify", "金流", "購物車", "ecommerce", "蝦皮"] },
+    "Line/Bot": { "enabled": true, "keywords": ["line", "linebot", "line bot", "telegram bot", "discord bot"] },
+    "其他": { "enabled": true, "keywords": [] }
+  },
+
+  "scoring": {
+    "criteria": {
+      "clarity":     { "label": "機會明確度", "desc": "是不是真在找人 / 需求清不清楚", "weight": 20 },
+      "skill":       { "label": "能力匹配",   "desc": "種類 + 技能 vs 我會的",        "weight": 25 },
+      "competition": { "label": "競爭強度",   "desc": "已被回覆數(紅海)/ 發文新鮮度", "weight": 20 },
+      "author":      { "label": "作者品質",   "desc": "粉絲數 / 真客戶 vs 同行",      "weight": 15 },
+      "deal":        { "label": "可成交性",   "desc": "像有預算 / 還是只是抱怨",      "weight": 10 },
+      "risk":        { "label": "風險訊號",   "desc": "釣魚 / 招代理(分數越高越安全)", "weight": 10 }
+    },
+    "threshold": 60,
+    "maybeThreshold": 45,
+    "_note_competition": "貼文回覆數超過此值視為紅海並降級",
+    "redOceanReplies": 15,
+    "freshHours": 24
+  },
+
+  "hardExcludes": {
+    "skipDisabledCategories": true,
+    "skipRedline": true,
+    "skipSkillMatchBelow": 3
+  },
+
+  "scrape": {
+    "headless": false,
+    "maxPostsPerQuery": 30,
+    "maxHomeFeed": 40,
+    "scrollRounds": 6,
+    "delayMsBetween": 2500
+  }
+}

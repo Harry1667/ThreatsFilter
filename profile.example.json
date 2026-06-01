@@ -1,0 +1,351 @@
+{
+  "note": "你的接案檔案 — 所有 AI 功能(求職信/回覆/建議)都會讀這份來為你量身。可在 /profile 頁編輯。",
+  "name": "Po-Han Hua",
+  "title": "Full Stack Developer | AI Integration & Automation",
+  "level": "Upwork 新手(0 評價,衝第一個 5 星階段)",
+  "hourlyRate": 20,
+  "rateNote": "前幾單可略低於客戶習慣價搶第一個評價",
+  "bio": "全端工程師,專長 AI 整合與自動化。擅長把商業流程痛點轉成可上線的應用,從 UI 到雲端部署一手包。重視業務邏輯與品質掌控,能在通話中為每個技術決策辯護。",
+  "skills": [
+    "React",
+    "Next.js",
+    "Node.js",
+    "TypeScript",
+    "JavaScript",
+    "Express",
+    "FastAPI",
+    "Python",
+    "Flutter",
+    "React Native",
+    "OpenAI API",
+    "Claude API",
+    "Gemini API",
+    "Prompt Engineering",
+    "API Integration",
+    "OCR",
+    "Automation",
+    "Playwright",
+    "PostgreSQL",
+    "Supabase",
+    "Prisma",
+    "SQLite",
+    "Docker",
+    "Nginx",
+    "Oracle Cloud",
+    "OWASP",
+    "Website Security",
+    "n8n",
+    "Webhook"
+  ],
+  "portfolio": [
+    {
+      "name": "Mentora",
+      "type": "Full-Stack AI SaaS",
+      "desc": "多角色 AI 導師平台。Next.js + Node.js + PostgreSQL,Clerk 驗證,Docker/Nginx 部署於 Oracle Cloud,含即時邏輯。",
+      "tech": [
+        "Next.js",
+        "Node.js",
+        "PostgreSQL",
+        "Docker",
+        "Clerk"
+      ],
+      "link": ""
+    },
+    {
+      "name": "CamMenu",
+      "type": "AI Mobile App (iOS)",
+      "desc": "AI 菜單翻譯 App。Flutter + Gemini 多模態 API 做 OCR,把複雜圖片轉成結構化 JSON,處理 App Store 訂閱上架。",
+      "tech": [
+        "Flutter",
+        "Gemini API",
+        "OCR",
+        "iOS"
+      ],
+      "link": ""
+    },
+    {
+      "name": "MathBox",
+      "type": "Web Tool",
+      "desc": "高效能數學視覺化工具。React + Vite + KaTeX,即時 LaTeX 渲染與符號運算。",
+      "tech": [
+        "React",
+        "Vite",
+        "KaTeX"
+      ],
+      "link": ""
+    },
+    {
+      "name": "api-dindon (DingDong Call)",
+      "type": "Backend / Automation",
+      "desc": "醫院叫號通知系統。FastAPI + Celery + Redis,29 家醫院各自爬蟲(共用介面),LINE Bot 推播,Docker Compose 部署。",
+      "tech": [
+        "FastAPI",
+        "Celery",
+        "Redis",
+        "Python",
+        "Docker"
+      ],
+      "link": ""
+    }
+  ],
+  "coverLetterStyle": {
+    "language": "English",
+    "rules": [
+      "開頭直接點出客戶的問題,不要先自我介紹",
+      "用一個最相關的作品當證據(具體技術細節)",
+      "給具體做法 + 預估時間",
+      "結尾問一個容易回答、能引導對話的問題",
+      "禁用詞:vibe coder、靠 AI、10x speed、做了15個app",
+      "強調懂業務邏輯、掌控品質,語氣專業但像真人",
+      "長度 70-110 字,精簡"
+    ]
+  },
+  "capability": {
+    "note": "我的能力 = 可交付項目 + 邊界(能做/不做)。level=在這項的深度(5精通…1碰過)。keywords 供案件比對。可在 /me 編輯。",
+    "skills": [
+      {
+        "name": "全棧 Web App / SaaS（React/Next/Node）",
+        "level": 5,
+        "canDo": "規劃架構與資料流、指揮 Claude 做前後台+DB+驗證+部署、通話辯護技術決策、掌控品質交付",
+        "cantDo": "需多人團隊的大型企業系統、高併發/分散式架構調校、大型 legacy 重構",
+        "keywords": [
+          "react",
+          "next.js",
+          "nextjs",
+          "node",
+          "node.js",
+          "nodejs",
+          "express",
+          "full stack",
+          "fullstack",
+          "saas",
+          "typescript",
+          "javascript",
+          "mvp",
+          "web app",
+          "dashboard"
+        ]
+      },
+      {
+        "name": "AI 整合 / LLM 應用（OpenAI/Claude/Gemini）",
+        "level": 5,
+        "canDo": "設計 LLM 應用流程(prompt/RAG/function calling/多模態)、選型與成本控制、串接並實際上線",
+        "cantDo": "自訓練/微調大模型、MLOps pipeline、需 ML 研究的客製模型",
+        "keywords": [
+          "openai",
+          "claude",
+          "anthropic",
+          "gemini",
+          "llm",
+          "gpt",
+          "prompt",
+          "chatbot",
+          "rag",
+          "ai integration"
+        ]
+      },
+      {
+        "name": "OCR / 多模態文件解析",
+        "level": 4,
+        "canDo": "用多模態 API 把圖片/PDF 轉結構化資料、設計解析流程與容錯",
+        "cantDo": "自建 OCR 模型、醫療/法律級精度保證",
+        "keywords": [
+          "ocr",
+          "vision",
+          "image analysis",
+          "multimodal",
+          "document parsing",
+          "pdf"
+        ]
+      },
+      {
+        "name": "跨平台行動 App（Flutter / React Native）",
+        "level": 4,
+        "canDo": "規劃並交付含 API 串接、OCR、推播、App Store 訂閱上架的 App",
+        "cantDo": "複雜原生模組(藍牙/AR/相機底層)、手機遊戲、高效能即時繪圖",
+        "keywords": [
+          "flutter",
+          "dart",
+          "react native",
+          "react-native",
+          "expo",
+          "mobile app",
+          "ios app",
+          "android app"
+        ]
+      },
+      {
+        "name": "自動化 / 爬蟲 / 後端任務佇列",
+        "level": 4,
+        "canDo": "規劃爬蟲+排程+佇列(Playwright/Celery/n8n/webhook)、設計容錯與通知",
+        "cantDo": "大規模反爬對抗、有法務風險的爬取",
+        "keywords": [
+          "automation",
+          "scraping",
+          "scraper",
+          "playwright",
+          "puppeteer",
+          "n8n",
+          "webhook",
+          "celery",
+          "redis",
+          "cron",
+          "fastapi",
+          "python"
+        ]
+      },
+      {
+        "name": "資料庫 / 後端 API（PostgreSQL/Supabase）",
+        "level": 4,
+        "canDo": "設計 schema、REST API、用 ORM 落地(Postgres/Supabase/Prisma)",
+        "cantDo": "資料倉儲/OLAP 調校、極端高併發 DB 優化",
+        "keywords": [
+          "postgresql",
+          "postgres",
+          "supabase",
+          "prisma",
+          "sqlite",
+          "mysql",
+          "rest api",
+          "api integration",
+          "fastify"
+        ]
+      },
+      {
+        "name": "部署 / DevOps（Docker/Nginx/雲端）",
+        "level": 3,
+        "canDo": "Docker+Nginx+雲端(Oracle)單機到中型部署與上線維運",
+        "cantDo": "K8s 叢集、多 region 高可用、企業級 CI/CD pipeline",
+        "keywords": [
+          "docker",
+          "nginx",
+          "deploy",
+          "deployment",
+          "vps",
+          "oracle cloud",
+          "ci/cd"
+        ]
+      },
+      {
+        "name": "網站安全 / 稽核（OWASP）",
+        "level": 3,
+        "canDo": "基本 OWASP 檢查、常見漏洞修補、加密儲存",
+        "cantDo": "正式滲透測試報告、合規稽核(SOC2/ISO)、需證照背書的安全評估",
+        "keywords": [
+          "owasp",
+          "security audit",
+          "website security",
+          "penetration",
+          "vulnerability"
+        ]
+      },
+      {
+        "name": "iOS 原生（Swift/SwiftUI）",
+        "level": 2,
+        "canDo": "用 Claude 做中小型 SwiftUI App",
+        "cantDo": "複雜原生功能、需深度 iOS 經驗判斷的疑難雜症(通話會露餡)",
+        "keywords": [
+          "swift",
+          "swiftui",
+          "ios native"
+        ]
+      },
+      {
+        "name": "Chrome 擴充功能",
+        "level": 3,
+        "canDo": "規劃並交付中小型擴充功能(內容腳本/背景/儲存)",
+        "cantDo": "需逆向或對抗網站偵測的擴充",
+        "keywords": [
+          "chrome extension",
+          "browser extension"
+        ]
+      },
+      {
+        "name": "前端工具 / 視覺化（KaTeX/Canvas/PWA）",
+        "level": 4,
+        "canDo": "KaTeX/Canvas/PWA 類互動工具",
+        "cantDo": "高效能 3D/WebGL、複雜資料視覺化引擎",
+        "keywords": [
+          "katex",
+          "canvas",
+          "pwa",
+          "data visualization",
+          "tailwind",
+          "vite"
+        ]
+      },
+      {
+        "name": "Bug 修復 / 小型維護任務",
+        "level": 4,
+        "canDo": "讀懂現有碼、指揮 Claude 定位並修 bug、小型功能增修",
+        "cantDo": "不熟技術棧(紅線語言)的 legacy 維護",
+        "keywords": [
+          "bug fix",
+          "bug fixing",
+          "fix bug",
+          "small task",
+          "quick fix",
+          "troubleshoot"
+        ]
+      }
+    ],
+    "redlines": [
+      "wordpress",
+      "woocommerce",
+      "elementor",
+      "shopify",
+      "liquid",
+      "wix",
+      "squarespace",
+      "webflow",
+      "php",
+      "laravel",
+      "codeigniter",
+      ".net",
+      "c#",
+      "asp.net",
+      "java developer",
+      "java backend",
+      "spring boot",
+      "kotlin",
+      "j2ee",
+      "ruby on rails",
+      "golang",
+      "rust lang",
+      "blockchain",
+      "solidity",
+      "web3",
+      "smart contract",
+      "cryptocurrency",
+      "unity",
+      "unreal",
+      "game development",
+      "3d modeling",
+      "blender",
+      "salesforce",
+      "sap erp",
+      "odoo",
+      "magento",
+      "figma to",
+      "pure design",
+      "logo design",
+      "video editing",
+      "seo only",
+      "social media manager"
+    ],
+    "scaleCeiling": "可獨立承接到中型全棧 SaaS / 行動 App / 自動化系統(MVP 到上線一手包)。不接:需要團隊的大型企業系統、純設計/純行銷/影片案、上述紅線技術棧。",
+    "searchKeywords": [
+      "full stack developer",
+      "Next.js",
+      "React developer",
+      "Node.js",
+      "AI integration",
+      "OpenAI API",
+      "automation",
+      "web scraping",
+      "API integration",
+      "Flutter developer",
+      "bug fix"
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+node_modules/
+.env
+*.db
+*.db-wal
+*.db-shm
+.DS_Store
+profile.json
+.gstack/
+collect.mjs
+
+# 個人 skill 收藏(含部署SOP/伺服器資訊/示範token)，不屬於本 app
+03-Skills/
+02-web/
+01-dev/git-secrets-rules.md
+portfolio.json
