@@ -1,7 +1,7 @@
 // Dashboard — 原生 HTTP server，列表（種類過濾）/ 評估 / 產草稿 / 追蹤。
 // MVP：單檔內嵌 HTML。沿用 Upwork 版的 sidebar 心智模型，但精簡。
 import http from 'node:http';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { openDb, listPosts, getPost, updatePost, addInteraction, interactionStats } from './db.js';
@@ -15,6 +15,35 @@ if (existsSync(ENV)) { try { process.loadEnvFile(ENV); } catch {} }
 const PORT = process.env.WEB_PORT || 3013;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// .env 單一 key 讀寫（保留其他行；給設定頁的金鑰編輯用）
+function readEnv() {
+  if (!existsSync(ENV)) return '';
+  try { return readFileSync(ENV, 'utf8'); } catch { return ''; }
+}
+function getEnvVar(key) {
+  const m = readEnv().match(new RegExp('^' + key + '=(.*)$', 'm'));
+  return m ? m[1].trim() : '';
+}
+// value 為空字串＝刪除該行。同步更新 process.env 讓本次 server 立即生效。
+function setEnvVar(key, value) {
+  const lines = readEnv().split('\n');
+  let found = false;
+  const out = [];
+  for (const line of lines) {
+    if (new RegExp('^' + key + '=').test(line)) {
+      found = true;
+      if (value !== '') out.push(`${key}=${value}`); // 空值＝刪除（不 push）
+    } else out.push(line);
+  }
+  if (!found && value !== '') {
+    if (out.length && out[out.length - 1] !== '') out.push('');
+    out.push(`${key}=${value}`);
+  }
+  writeFileSync(ENV, out.join('\n'));
+  if (value === '') delete process.env[key]; else process.env[key] = value;
+}
+const maskKey = (v) => !v ? '（未設定）' : v.length <= 8 ? '••••' : v.slice(0, 4) + '••••' + v.slice(-4);
 
 function layout(title, body) {
   return `<!doctype html><html lang="zh-Hant"><head><meta charset="utf8">
@@ -120,11 +149,26 @@ function trackPage() {
     <table><tr><th>類型</th><th>內容</th><th>狀態</th><th>時間</th></tr>${body || '<tr><td colspan=4>尚無</td></tr>'}</table>`);
 }
 
-function settingsPage() {
+function settingsPage(q = {}) {
   const cfg = loadConfig();
   const cats = Object.entries(cfg.workCategories).filter(([k]) => !k.startsWith('_'))
     .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v.enabled ? '✅ 開' : '⬜ 關'}</td></tr>`).join('');
-  return layout('設定', `<h2>工作種類</h2>
+  const token = getEnvVar('AI_PROXY_TOKEN');
+  const note = q.saved === 'token' ? '<span class="badge b-reply">已更新金鑰</span>'
+    : q.saved === 'del' ? '<span class="badge b-skip">已刪除金鑰</span>' : '';
+  const keyBox = `<h2>🔑 AI 金鑰（ProxyCLI Token）</h2>
+    <p class="meta">目前：<code>${esc(maskKey(token))}</code> ${note}</p>
+    <div class="card">
+      <form method="post" action="/settings/key" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="password" name="token" placeholder="貼上新的 AI_PROXY_TOKEN" autocomplete="off"
+          style="flex:1;min-width:280px;border:1px solid #d0d5dd;border-radius:8px;padding:9px 11px;font:14px inherit">
+        <button class="btn" name="action" value="save">💾 更新</button>
+        <button class="btn" name="action" value="delete" style="background:#c5221f"
+          onclick="return confirm('確定刪除 AI 金鑰？刪除後 AI 評分/產草稿會停用。')">🗑 刪除</button>
+      </form>
+      <p class="meta" style="margin:8px 0 0">寫入 <code>.env</code> 的 <code>AI_PROXY_TOKEN</code>，即時生效。</p>
+    </div>`;
+  return layout('設定', `${keyBox}<h2 style="margin-top:24px">工作種類</h2>
     <p class="meta">改 <code>config.json</code> 的 workCategories.enabled，存檔後跑 <code>npm run rescore</code>。</p>
     <table><tr><th>種類</th><th>狀態</th></tr>${cats}</table>
     <h2 style="margin-top:24px">評分門檻</h2>
@@ -175,7 +219,14 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && u.pathname === '/') return send(listPage(parseQuery(req.url)));
     if (req.method === 'GET' && u.pathname === '/post') return send(await postPage(parseQuery(req.url)));
     if (req.method === 'GET' && u.pathname === '/track') return send(trackPage());
-    if (req.method === 'GET' && u.pathname === '/settings') return send(settingsPage());
+    if (req.method === 'GET' && u.pathname === '/settings') return send(settingsPage(parseQuery(req.url)));
+    if (req.method === 'POST' && u.pathname === '/settings/key') {
+      const b = await readBody(req);
+      const val = b.action === 'delete' ? '' : (b.token || '').trim();
+      if (b.action !== 'delete' && !val) { res.writeHead(302, { location: '/settings' }); return res.end(); }
+      setEnvVar('AI_PROXY_TOKEN', val);
+      res.writeHead(302, { location: '/settings?saved=' + (b.action === 'delete' ? 'del' : 'token') }); return res.end();
+    }
     if (req.method === 'GET' && u.pathname === '/content') return send(contentPage());
     if (req.method === 'POST' && u.pathname === '/content/classify') {
       await classify();
