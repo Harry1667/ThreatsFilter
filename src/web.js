@@ -69,7 +69,7 @@ table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #eee;pa
 </style></head><body><div class="wrap">
 <nav><h1>🧵 Threads Filter</h1>
 <div class="sec">撈案引擎</div>
-<a href="/">① 列表</a><a href="/?verdict=REPLY">值得回覆</a><a href="/track">④ 追蹤</a>
+<a href="/">① 列表</a><a href="/jobs">📂 案子分類</a><a href="/?verdict=REPLY">值得回覆</a><a href="/track">④ 追蹤</a>
 <div class="sec">內容行銷</div>
 <a href="/content">📣 作品 / 發文</a>
 <div class="sec">設定</div><a href="/settings">🎯 種類 / 評分</a>
@@ -113,6 +113,114 @@ function listPage(q) {
     </div>`).join('') || '<p>沒有資料。先跑 <code>npm run scrape</code> 再 <code>npm run triage</code>。</p>';
 
   return layout('列表', `<h2>機會列表（${rows.length}）</h2><div>${chips}</div>${cards}`);
+}
+
+function jobsPage(q) {
+  const db = openDb();
+  const cfg = loadConfig();
+  const cats = enabledCategories(cfg);
+  const verdict = q.verdict || '';
+
+  const whereBase = ["blocked=0", "post_type!='noise'"];
+  const args = [];
+  if (verdict) { whereBase.push('verdict=?'); args.push(verdict); }
+  const allRows = listPosts(db, { where: 'WHERE ' + whereBase.join(' AND '), args });
+
+  // 統計
+  const total = allRows.length;
+  const countByV = { REPLY: 0, MAYBE: 0, SKIP: 0 };
+  for (const r of allRows) countByV[r.verdict] = (countByV[r.verdict] || 0) + 1;
+
+  const verdictTabs = [
+    { label: '全部', val: '' },
+    { label: `值得回覆 (${db.prepare("SELECT COUNT(*) n FROM posts WHERE blocked=0 AND post_type!='noise' AND verdict='REPLY'").get().n})`, val: 'REPLY' },
+    { label: `也許 (${db.prepare("SELECT COUNT(*) n FROM posts WHERE blocked=0 AND post_type!='noise' AND verdict='MAYBE'").get().n})`, val: 'MAYBE' },
+    { label: `略過 (${db.prepare("SELECT COUNT(*) n FROM posts WHERE blocked=0 AND post_type!='noise' AND verdict='SKIP'").get().n})`, val: 'SKIP' },
+  ].map((t) => `<a class="tab ${verdict === t.val ? 'on' : ''}" href="/jobs${t.val ? '?verdict=' + t.val : ''}">${t.label}</a>`).join('');
+
+  // 依種類分組
+  const byCategory = {};
+  for (const r of allRows) {
+    const cat = r.category || '其他';
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push(r);
+  }
+
+  // 排序：REPLY 優先
+  const verdictOrder = { REPLY: 0, MAYBE: 1, SKIP: 2 };
+  const catOrder = [...cats, '其他', '未分類'];
+
+  const sections = catOrder
+    .filter((cat) => byCategory[cat]?.length)
+    .map((cat) => {
+      const rows = [...(byCategory[cat] || [])].sort((a, b) => (verdictOrder[a.verdict] ?? 3) - (verdictOrder[b.verdict] ?? 3) || (b.total_score ?? 0) - (a.total_score ?? 0));
+      const replyCount = rows.filter((r) => r.verdict === 'REPLY').length;
+      const cards = rows.map((p) => {
+        const scoreCls = (p.total_score ?? 0) >= 60 ? '#137333' : (p.total_score ?? 0) >= 45 ? '#b06000' : '#5f6368';
+        const preview = (p.text || '').replace(/\n+/g, ' ').slice(0, 160);
+        return `<div class="jcard" data-verdict="${p.verdict || ''}">
+          <div class="jcard-top">
+            ${badge(p.verdict)}
+            <span class="jscore" style="color:${scoreCls}">${p.total_score ?? '-'}</span>
+          </div>
+          <p class="jtext">${esc(preview)}${p.text?.length > 160 ? '…' : ''}</p>
+          <div class="jmeta">@${esc(p.author_handle || '?')} · 回覆 ${p.replies ?? '?'}</div>
+          <div class="jactions">
+            <a href="/post?id=${p.id}">評估 →</a>
+            <a href="${esc(p.url)}" target="_blank" rel="noopener">原文</a>
+          </div>
+        </div>`;
+      }).join('');
+      return `<section class="cat-section">
+        <div class="cat-header">
+          <span class="cat-name">${esc(cat)}</span>
+          <span class="cat-count">${rows.length} 則${replyCount ? ` · <span style="color:#137333;font-weight:700">${replyCount} 值得回覆</span>` : ''}</span>
+        </div>
+        <div class="jgrid">${cards}</div>
+      </section>`;
+    }).join('') || '<p style="padding:20px;color:#667">目前沒有符合條件的案子。</p>';
+
+  // 未分類的 category 不在 catOrder 裡
+  const uncatKeys = Object.keys(byCategory).filter((c) => !catOrder.includes(c));
+  const uncatSections = uncatKeys.map((cat) => {
+    const rows = byCategory[cat];
+    const cards = rows.map((p) => {
+      const preview = (p.text || '').replace(/\n+/g, ' ').slice(0, 160);
+      return `<div class="jcard"><div class="jcard-top">${badge(p.verdict)}<span class="jscore">${p.total_score ?? '-'}</span></div>
+        <p class="jtext">${esc(preview)}…</p>
+        <div class="jmeta">@${esc(p.author_handle || '?')} · 回覆 ${p.replies ?? '?'}</div>
+        <div class="jactions"><a href="/post?id=${p.id}">評估 →</a><a href="${esc(p.url)}" target="_blank">原文</a></div></div>`;
+    }).join('');
+    return `<section class="cat-section"><div class="cat-header"><span class="cat-name">${esc(cat)}</span><span class="cat-count">${rows.length} 則</span></div><div class="jgrid">${cards}</div></section>`;
+  }).join('');
+
+  const style = `<style>
+    .tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+    .tab{padding:7px 16px;border-radius:20px;text-decoration:none;font-size:14px;border:1px solid #d0d5dd;color:#344;background:#fff}
+    .tab.on{background:#1a73e8;color:#fff;border-color:#1a73e8}
+    .stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+    .stat{background:#fff;border:1px solid #e6e8eb;border-radius:8px;padding:10px 16px;text-align:center;min-width:80px}
+    .stat .n{font-size:22px;font-weight:700} .stat .l{font-size:12px;color:#667;margin-top:2px}
+    .cat-section{margin-bottom:28px}
+    .cat-header{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;border-bottom:2px solid #e6e8eb;padding-bottom:6px}
+    .cat-name{font-size:16px;font-weight:700;color:#1a1a1a}
+    .cat-count{font-size:13px;color:#667}
+    .jgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+    .jcard{background:#fff;border:1px solid #e6e8eb;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+    .jcard[data-verdict="REPLY"]{border-left:3px solid #34a853}
+    .jcard[data-verdict="MAYBE"]{border-left:3px solid #fbbc04}
+    .jcard-top{display:flex;justify-content:space-between;align-items:center}
+    .jscore{font-size:18px;font-weight:700}
+    .jtext{margin:0;font-size:13px;line-height:1.5;color:#333;flex:1}
+    .jmeta{font-size:12px;color:#667}
+    .jactions{display:flex;gap:12px;font-size:13px} .jactions a{color:#1a73e8;text-decoration:none}
+    .jactions a:hover{text-decoration:underline}
+  </style>`;
+
+  return layout('案子分類', `${style}
+    <h2>案子分類（${total} 則）</h2>
+    <div class="tabs">${verdictTabs}</div>
+    ${sections}${uncatSections}`);
 }
 
 async function postPage(q) {
@@ -217,6 +325,7 @@ const server = http.createServer(async (req, res) => {
   const send = (html, code = 200) => { res.writeHead(code, { 'content-type': 'text/html; charset=utf8' }); res.end(html); };
   try {
     if (req.method === 'GET' && u.pathname === '/') return send(listPage(parseQuery(req.url)));
+    if (req.method === 'GET' && u.pathname === '/jobs') return send(jobsPage(parseQuery(req.url)));
     if (req.method === 'GET' && u.pathname === '/post') return send(await postPage(parseQuery(req.url)));
     if (req.method === 'GET' && u.pathname === '/track') return send(trackPage());
     if (req.method === 'GET' && u.pathname === '/settings') return send(settingsPage(parseQuery(req.url)));
